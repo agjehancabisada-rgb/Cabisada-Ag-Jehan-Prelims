@@ -1,0 +1,79 @@
+heroes = {
+    1: ("Layla", "Marksman"),
+    2: ("Tigreal", "Tank"),
+    3: ("Gusion", "Assassin"),
+    4: ("Kagura", "Mage"),
+    5: ("Chou", "Fighter")
+}
+
+
+ign = input("Enter your IGN: ")
+rank = input("Enter your current rank: ")
+
+matches = []
+
+
+for i in range(1, 5):
+    print(f"\nMatch {i}")
+    print("Hero Roster:")
+    for num, (name, role) in heroes.items():
+        print(f"{num}. {name} ({role})")
+
+    choice = int(input("Choose hero number (1–5) or 0 to skip: "))
+
+    if choice == 0:
+        continue
+
+    if choice not in heroes:
+        print("Invalid choice. Skipping match.")
+        continue
+
+    hero_name = heroes[choice][0]
+
+
+    kills = int(input("Kills: "))
+    deaths = int(input("Deaths: "))
+    assists = int(input("Assists: "))
+    result = input("Result (W/L): ").upper()
+
+  
+    deaths_for_calc = deaths if deaths != 0 else 1
+    kda = (kills + assists) / deaths_for_calc
+
+   
+    if kda > 5 and result == "W":
+        tag = "DOMINATION!"
+    elif kda > 5 and result == "L":
+        tag = "Carried Hard"
+    elif kda < 5 and result == "W":
+        tag = "Team Effort"
+    else:
+        tag = "Better Luck Next Game"
+
+    matches.append({
+        "hero": hero_name,
+        "kda": round(kda, 2),
+        "result": result,
+        "tag": tag
+    })
+
+
+wins = sum(1 for m in matches if m["result"] == "W")
+losses = sum(1 for m in matches if m["result"] == "L")
+total = len(matches)
+
+win_rate = round((wins / total) * 100) if total > 0 else 0
+
+best_match = max(matches, key=lambda x: x["kda"], default=None)
+
+
+print("\n=== MATCH SUMMARY ===")
+print(f"IGN: {ign}")
+print(f"Rank: {rank}\n")
+
+for idx, m in enumerate(matches, 1):
+    best_label = " <-- BEST MATCH" if m == best_match else ""
+    print(f"Match {idx}: {m['hero']} | KDA: {m['kda']:.2f} | Result: {m['result']} | {m['tag']}{best_label}")
+
+print(f"\nRecord: {wins}W - {losses}L")
+print(f"Win Rate: {win_rate}%")
